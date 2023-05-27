@@ -1,0 +1,380 @@
+from datetime import datetime, date
+from random import randrange
+class Bird():
+    @staticmethod
+    def check_legal_color(legal_color, colors):
+        for color in colors:
+            if color not in legal_color:
+                return False
+        return True
+
+    def __init__(self, ID: str, btype: str, birth: str, colors: list, foodtype: str, volume: int):
+        if self.check_id(ID):
+            self.ID = ID
+        if self.check_btype(btype):
+            self.btype = btype
+        if self.check_birth(birth):
+            self.birth = birth
+        if self.check_color(colors):
+            self.colors = colors
+        if self.check_eat(foodtype):
+            self.foodtype = foodtype
+        if isinstance(volume, int):
+            self.volume = volume
+        else:raise ValueError("illegal")
+    def check_id(self,ID):
+        if isinstance(ID,str):
+            for chr in ID:
+                if not chr.isupper() and not chr.isnumeric():
+                    raise ValueError("that illegal id")
+            return True
+    def check_btype(self,btype):
+        type=["Gouldian Finch","Budgerigar","Love Bird","Zebra Finch"]
+        if btype in type:
+            return True
+        else:
+            raise ValueError('thats not illegal type')
+    def check_birth(self,birth):
+        if isinstance(birth,str):
+            x=birth.split(":")
+            if len(x)!=3:
+                raise ValueError("illegal birth")
+            for date in x:
+                if not date.isnumeric():
+                    raise ValueError("illegal birth")
+            if  int(x[0])<=30 and int(x[0])>0 and int(x[1])<=12 and int(x[1])>=1 and int(x[2])>0 and int(x[2])<=2023:
+                return True
+            else: raise ValueError("illegal date")
+    def check_color(self,colors):
+        if isinstance(colors,list) and len(colors)>=1:
+            return True
+        else:
+            raise ValueError("illegal")
+    def check_eat(self,foodtype):
+        food=['Corn','Seeds']
+        if foodtype not in food:
+            raise ValueError("illegal")
+        else:
+            return True
+
+    def get_age(self):
+        date_t = date.today()
+        n_day = date_t.day
+        n_year = date_t.year
+        n_month = date_t.month
+        day, month, year = self.birth.split(":")
+        age_year = n_year - int(year)
+        age_month = n_month - int(month)
+        age_day = n_day - int(day)
+        if age_month < 0:
+            age_year -= 1
+            age_month += 12
+        if age_day < 0:
+            age_month -= 1
+            age_day += 30
+        return (str(age_year) + "Y," + str(age_month) + "M," + str(age_day) + "D")
+    def get_ID(self):
+        return self.ID
+    def get_type(self):
+        return self.btype
+
+    def get_colors(self):
+        return self.colors
+
+    def get_food_type(self):
+        return self.foodtype
+
+    def get_volume(self):
+        return self.volume
+
+    def __str__(self):
+        return ("Bird ID: "+str(self.get_ID())+"\n"+"Bird type: "+str(self.get_type())+"\n"+"Age: "+
+                str(self.get_age())+"\n"+"Colors: "+str(self.get_colors())+
+        "\n"+"Food type:"+str(self.get_food_type())+"\n").strip("\n")
+    def __eq__(self, other):
+        if isinstance(other,Bird):
+            if self.btype==other.btype:
+                return True
+            else:return False
+        else:raise ValueError("not a bird")
+
+    def __lt__(self, other):
+        if isinstance(other,Bird):
+            return len(self.get_colors())<len(self.get_colors())
+        else:raise ValueError("you are crazy")
+
+    def __ge__(self, other):
+        if isinstance(other,Bird):
+            return len(self.get_colors())>len(self.get_colors())
+        else:raise ValueError("iam a crazy")
+    def calculate_year(self):
+        y = ""
+        x = self.get_age()
+        for chr in x:
+            if chr=="Y":
+                break
+            y+=chr
+        return y
+class Finch(Bird):
+    def __init__(self, ID: str, btype: str, birth: str, colors: list, volume: int):
+        Bird.__init__(self, ID, btype, birth, colors, "Seeds", volume)
+
+    def nest_building(self):
+        z=["|"]
+        x=self.calculate_year()
+        for i in range(0,int(x)):
+            z+=["_"]
+        return z+["|"]
+
+class Parrot(Bird):
+    def __init__(self, ID: str, btype: str, birth: str, colors: list, volume: int):
+        Bird.__init__(self, ID, btype, birth, colors, "Corn", volume)
+
+    def find_nestbox(self):
+        house = []
+        star = "*"
+        x = int(self.calculate_year())
+        if x <= 1:
+            return None
+        for r in range(0, x):
+            if r == 0 or r == x - 1:
+                house.append(x*[star])
+            else:
+                y=[star] + [" "] * (x - 2) + [star]
+                house.append(y)
+        return house
+
+
+
+
+class Zebrafinch(Finch):
+    legal_color=["Brown", "Orange", "Black", "White"]
+
+    def __init__(self, ID: str, birth: str, colors: list):
+        legal_color = ["Brown", "Orange", "Black", "White"]
+        for color in colors:
+            if color not in legal_color:
+                raise ValueError("fuck you")
+        Bird.__init__(self, ID,"Zebra Finch", birth, colors, "Seeds", 27000)
+    def get_type(self):
+        return self.btype
+    def jump(self):
+        return "I like to jump"
+    def __str__(self):
+        return Bird.__str__(self)
+class Gouldianfinch(Finch):
+    def __init__(self, ID: str, birth: str, colors: list):
+        legal_color=['Red', 'Green', 'Blue', 'Yellow', 'Orange', 'Black', 'Purple', 'White']
+        Finch.__init__(self, ID,"Gouldian Finch",birth,colors,96000)
+        self.volume=96000
+        self.otzma=randrange(1,11)
+    def sing(self):
+        return "I like to sing"+str(self.otzma)
+    def get_type(self):
+        return Bird.get_type(self)
+    def __str__(self):
+        return f'{Bird.__str__(self)}\n'\
+               f'Singing strngth:{self.otzma}'.rstrip("\n")
+
+class Budgerigar(Parrot):
+    def __init__(self, ID: str, birth: str, colors: list):
+        legal_color=['Green', 'Blue', 'Yellow', 'Gray', 'Purple', 'White']
+        if Budgerigar.check_legal_color(legal_color,colors):
+            Parrot.__init__(self, ID, "Budgerigar",birth,colors,96000)
+            self.otzma=randrange(1,11)
+    def get_type(self):
+        return Parrot.get_type(self)
+
+    def tweet(self):
+        return "I like to tweet"+str(self.otzma)
+    def __str__(self):
+        return Bird.__str__(self) + "\n" + "Tweet strength:"+str(self.otzma)
+
+
+class Lovebird(Parrot):
+    def __init__(self, ID: str, birth: str, colors: list):
+        legal_color=['Red', 'Green', 'Blue', 'Yellow', 'Black', 'White']
+        if Lovebird.check_legal_color(legal_color,colors):
+            Parrot.__init__(self,ID,"Love Bird",birth,colors,120000)
+    def get_type(self):
+        return "Love Bird"
+    def kiss(self):
+        return "I like to kiss"
+    def __str__(self):
+        return Bird.__str__(self)
+
+
+class Cage:
+    def check_id(self,ID):
+        if isinstance(ID,str):
+            for chr in ID:
+                if not chr.isupper() and not chr.isnumeric():
+                    raise ValueError("that illegal id")
+    def __truediv__(self, other):
+        if isinstance(self,(int,float)):
+            return float(self)/ float(other)
+    def __init__(self, ID: str, length: int, depth: int, height: int, color: str):
+        self.check_id(ID)
+        legal_color=['Silver', 'Black', 'White']
+        if  not isinstance(color,str) or color not in legal_color:
+            raise ValueError("illegal color")
+        if length%10!=0 or depth%10!=0 or height%10 !=0:
+            raise ValueError("illegal num")
+        self.Id=ID
+        self.type=[]
+        self.length=length
+        self.depth=depth
+        self.height=height
+        self.color=color
+        self.bird_clob=[]
+        self.array=["#"*int(length/10)]*int(height/10)
+        self.volume_1=0
+        self.count=0
+    def __add__(self, other:Bird):
+        self1=int(self.volume_1)
+        if  isinstance(other,Bird):
+            other=other.volume
+            return int(self1) + int(other)
+    def volumes(self):
+        return int(self.length*self.height*self.depth)
+    def update_vol(self,other):
+        self.volume_1+=other.volume
+    def add_bird(self, bird):
+        if self.array==["#"*int(self.length/10)]*int(self.height/10) and self.volume_1+bird.volume<=self.volumes():
+           Bird.__init__(bird,bird.ID,bird.btype,bird.birth,bird.colors,bird.foodtype,bird.volume)
+           self.update_vol(bird)
+           self.array=[bird.btype[0]*int(self.length/10)]*int(self.height/10)
+           self.bird_clob.append(bird)
+           self.count+=1
+           self.type.append(bird.btype)
+           return True
+        elif self.check_volumes(bird.volume) and self.array[0][0]==bird.btype[0]:
+            self.update_vol(bird)
+            self.bird_clob.append(bird)
+            self.count+=1
+            return True
+        else:return False
+    def check_volumes(self,bird):
+        if self.volume_1+bird<=self.volumes():
+            return True
+        return False
+
+    def get_birds(self):
+       return self.bird_clob
+    def get_num_of_birds(self):
+        return self.count
+
+    def get_type(self):
+        if self.type==[]:
+            return "Empty"
+        return self.type[0]
+    def get_cage(self):
+        return self.array
+
+    def __str__(self):
+        return f'Cage ID: {self.Id}\n' \
+               f'Size: {self.length,self.depth,self.height}\n' \
+               f'Color: {self.color}\n' \
+               f'Num of birds: {self.count}\n' \
+               f'Birds type:{self.get_type()}'.rstrip("\n")
+
+
+
+class Birdroom:
+    def __init__(self, length: float, width: float, height: float):
+        self.check_input(length)
+        self.bird=[]
+        self.check_input(width)
+        self.check_input(height)
+        self.length=length
+        self.width=width
+        self.height=height
+        self.cages=[]
+        self.birdroom = [
+                            ['-'] * (int(self.length) * 10 + 2)
+                        ] + [
+                            ["|" + " " * (int(self.length) * 10) + " |"]
+                            for _ in range(int(self.height * 10))
+                        ] + [
+                            ['-'] * (int(self.length) * 10 + 2)
+                        ]
+
+        lis1 = self.birdroom[1][0].split(" ")
+        for i in range(1, len(lis1)):
+            if lis1[i] == "":
+                lis1[i] = " "
+
+        for i in range(1, len(self.birdroom) - 1):
+            self.birdroom[i] = lis1[:]
+
+
+    def check_input(self,object):
+        if (float(object*10)).is_integer():
+            return True
+        else:raise ValueError("illegal num")
+    def get_cages(self):
+        return self.cages
+
+    def get_birds(self):
+        for cage in self.cages:
+            if isinstance(cage,Cage):
+                self.bird+=[bird1 for bird1 in cage.get_birds()]
+        return self.bird
+
+
+    def get_strength(self):
+        otzma=0
+        for cage in self.cages:
+            if isinstance(cage,Cage):
+                break
+        for cage in self.cages:
+            if isinstance(cage.bird_clob[0],(Budgerigar,Gouldianfinch)):
+                for bird in cage.bird_clob:
+                    otzma+=bird.otzma
+        if otzma!=0:
+            return otzma
+        else:return
+
+    def add_cage(self, cage, x: float, y: float):
+        if not isinstance(cage,Cage):
+            raise ValueError("fuck you")
+        if not isinstance(x,(float,int)):
+            raise ValueError("num")
+        if not  isinstance(y,(float,int)):
+            raise ValueError("NUM")
+        self.x = int(x*10)
+        self.y = int(y*10)
+        flag = True
+        for row in range(self.y+1, self.y + int(cage.height // 10)+1):
+            for col in range(self.x+1, self.x + int(cage.length // 10+1)):
+                if self.birdroom[row][col] == " ":
+                    flag = flag and True
+                else:
+                   return False
+        if flag:
+            self.cages.append(cage)
+            for row in range(self.y + 1, self.y + int(cage.height // 10) + 1):
+                for col in range(self.x + 1, self.x + int(cage.length // 10+1)):
+                    self.birdroom[row][col] = str(cage.get_type()[0])
+
+            return True
+
+
+    def get_birdroom(self):
+        return self.birdroom
+    def get_most_colorful(self):
+        if len(self.get_birds())!=0:
+            x=self.bird[0]
+            for i in range(0,len(self.bird)):
+                if  x>=self.bird[i]:
+                    pass
+                elif x<self.bird[i]:
+                    x=self.bird[i]
+            return x
+    def __str__(self):
+        return f'Size: {self.length,self.height,self.width}\n' \
+               f'Num of cages: {len(self.cages)}\n' \
+               f'Num of birds: {len(self.bird)}'
+
+
+
