@@ -335,7 +335,7 @@ class Birdroom:
             return otzma
         else:return
 
-    def add_cage(self, cage, x: float, y: float):
+    def add_cage(self, cage, x: float, y: float):# type cage is Cage 
         if not isinstance(cage,Cage):
             raise ValueError("fuck you")
         if not isinstance(x,(float,int)):
