@@ -64,7 +64,7 @@ class Bird():
         n_month = date_t.month
         day, month, year = self.birth.split(":")
         age_year = n_year - int(year)
-        age_month = n_month - int(month)
+        age_month = n_month - int(month)+1
         age_day = n_day - int(day)
         if age_month < 0:
             age_year -= 1
